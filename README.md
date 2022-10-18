@@ -22,9 +22,9 @@ SELECT * FROM member ORDER BY time DESC;
 
 - 使用 SELECT 指令取得 member 資料表中第 2 ~ 4 共三筆資料，並按照 time 欄位，由近到遠排序。( 並非編號 2、3、4 的資料，而是排序後的第 2 ~ 4 筆資料 )
 ``` SQL
-SELECT * FROM member WHERE id<>1 ORDER BY time DESC;
+SELECT * FROM member ORDER BY time DESC LIMIT 1,3;
 ```
-<img width="547" alt="image" src="https://user-images.githubusercontent.com/110615463/196136267-ad20e202-3ecf-461c-8d26-06eca5c15c65.png">
+<img width="541" alt="image" src="https://user-images.githubusercontent.com/110615463/196328675-3f4c5d77-0fbe-40d9-95fc-063ea368dfed.png">
 
 - 使用 SELECT 指令取得欄位 username 是 test 的會員資料。
 ``` SQL
