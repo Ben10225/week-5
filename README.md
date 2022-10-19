@@ -84,4 +84,31 @@ SELECT mb.username, AVG(mg.like_count) FROM message AS mg JOIN member AS mb ON m
 ```
 <img width="660" alt="image" src="https://user-images.githubusercontent.com/110615463/196135704-0101aea0-99b7-43b2-86c0-1535ee907c67.png">
 
+---
+### 額外要求
+- 可以根據留言編號取得該留言有哪些會員按讚。
+``` SQL
+SELECT m.name FROM pressLike AS p INNER JOIN member AS m ON p.member_id = m.id WHERE p.message_id=6;
+```
+<img width="769" alt="image" src="https://user-images.githubusercontent.com/110615463/196604419-21c9265a-0ff5-4867-b327-707dd41c5c2c.png">
 
+- 會員若是嘗試對留言按讚：要能先檢查是否曾經按過讚，然後才將按讚的數量 +1 並且記錄按讚的會員是誰。
+``` SQL
+-- trigger 
+DELIMITER $$
+CREATE TRIGGER memberPressed BEFORE INSERT ON pressLike 
+FOR EACH ROW BEGIN
+IF EXISTS(
+	SELECT member_id FROM pressLike WHERE message_id=new.message_id AND member_id=new.member_id) THEN
+SIGNAL SQLSTATE '45000'
+SET MESSAGE_TEXT = 'You Can only like the message once.';
+END if;
+END $$
+DELIMITER ;
+
+INSERT INTO pressLike(member_id, message_id) VALUES(1, 6), (2, 6), (3, 6);
+-- 已經按讚後 同一帳戶再按讚就會被拒絕
+INSERT INTO pressLike(member_id, message_id) VALUES(1, 6);
+-- ERROR 1644 (45000): You Can only like the message once.
+```
+<img width="487" alt="image" src="https://user-images.githubusercontent.com/110615463/196604927-57abec86-c893-4944-b212-412e053612cd.png">
